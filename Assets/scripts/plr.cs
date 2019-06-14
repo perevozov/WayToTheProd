@@ -8,33 +8,38 @@ public class plr : MonoBehaviour
     public Animator Animator;
 
     private bool m_FacingRight = true;
+    private bool jumping = false;
 
     public float hMove = 0;
 
     public bool isGrounded = false;
+    private Rigidbody2D Rigidbody2D;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        Rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
         hMove = Input.GetAxisRaw("Horizontal") * Speed;
+        if (Input.GetButtonUp("Jump"))
+        {
+            jumping = true;
+        }
+
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.5f);
 
         bool collision = false;
         // If it hits something...
         foreach(RaycastHit2D hit in hits)
         {
-            if(hit.collider.gameObject == gameObject)
-            {
+            if(hit.collider.gameObject == gameObject) 
                 continue;
-            }
+
             collision = true;
-            Debug.Log(hit.collider.gameObject.name);
         }
         isGrounded = collision;
     }
@@ -43,8 +48,14 @@ public class plr : MonoBehaviour
     {
         if(isGrounded)
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector2(hMove, 0);
+            if(jumping)
+            {
+                Rigidbody2D.AddForce(new Vector2(0, 50f));
+                Debug.Log("jumping");
+            }
+            Rigidbody2D.velocity = new Vector2(hMove, 0);
             Animator.SetFloat("Speed", Mathf.Abs(hMove));
+
         }
         else
         {
