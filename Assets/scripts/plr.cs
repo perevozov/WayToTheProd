@@ -5,6 +5,7 @@ using UnityEngine;
 public class plr : MonoBehaviour
 {
     public float Speed = 5f;
+    public float MaxSpeed = 5f;
     public Animator Animator;
 
     private bool m_FacingRight = true;
@@ -25,10 +26,7 @@ public class plr : MonoBehaviour
     void Update()
     {
         hMove = Input.GetAxisRaw("Horizontal") * Speed;
-        if (Input.GetButtonUp("Jump"))
-        {
-            jumping = true;
-        }
+
 
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.5f);
 
@@ -42,24 +40,35 @@ public class plr : MonoBehaviour
             collision = true;
         }
         isGrounded = collision;
+
+        if (Input.GetButtonUp("Jump") && isGrounded)
+        {
+            jumping = true;
+        }
+
+
     }
 
     private void FixedUpdate()
     {
-        if(isGrounded)
+        float currentSpeed = Mathf.Abs(Rigidbody2D.velocity.x);
+        if (isGrounded)
         {
             if(jumping)
             {
-                Rigidbody2D.AddForce(new Vector2(0, 50f));
-                Debug.Log("jumping");
+                Rigidbody2D.AddForce(new Vector2(0, 70f));
+                jumping = false;
             }
-            Rigidbody2D.velocity = new Vector2(hMove, 0);
-            Animator.SetFloat("Speed", Mathf.Abs(hMove));
+
+            if(currentSpeed < MaxSpeed)
+            {
+                Rigidbody2D.AddForce(new Vector2(hMove, 0));
+            }
 
         }
         else
         {
-            Animator.SetFloat("Speed", 0);
+            //Animator.SetFloat("Speed", 0);
         }
 
 
@@ -71,6 +80,8 @@ public class plr : MonoBehaviour
         {
             Flip();
         }
+
+        Animator.SetFloat("Speed", currentSpeed);
     }
 
     private void Flip()
