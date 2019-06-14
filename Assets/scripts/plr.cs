@@ -11,6 +11,8 @@ public class plr : MonoBehaviour
 
     public float hMove = 0;
 
+    public bool isGrounded = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,12 +23,34 @@ public class plr : MonoBehaviour
     void Update()
     {
         hMove = Input.GetAxisRaw("Horizontal") * Speed;
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.5f);
+
+        bool collision = false;
+        // If it hits something...
+        foreach(RaycastHit2D hit in hits)
+        {
+            if(hit.collider.gameObject == gameObject)
+            {
+                continue;
+            }
+            collision = true;
+            Debug.Log(hit.collider.gameObject.name);
+        }
+        isGrounded = collision;
     }
 
     private void FixedUpdate()
     {
-        GetComponent<Rigidbody2D>().velocity = new Vector2(hMove, 0);
-        Animator.SetFloat("Speed", Mathf.Abs(hMove));
+        if(isGrounded)
+        {
+            GetComponent<Rigidbody2D>().velocity = new Vector2(hMove, 0);
+            Animator.SetFloat("Speed", Mathf.Abs(hMove));
+        }
+        else
+        {
+            Animator.SetFloat("Speed", 0);
+        }
+
 
         if (hMove > 0 && !m_FacingRight)
         {
