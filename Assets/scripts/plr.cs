@@ -5,6 +5,11 @@ using UnityEngine;
 public class plr : MonoBehaviour
 {
     public float Speed = 5f;
+    public Animator Animator;
+
+    private bool m_FacingRight = true;
+
+    public float hMove = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -15,14 +20,32 @@ public class plr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        if (Input.GetAxis("Jump") > 0)
-        {
-            Debug.Log("start jump");
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 50);
-        }
-
-        GetComponent<Rigidbody2D>().velocity = new Vector2(h, 0) * Speed;
+        hMove = Input.GetAxisRaw("Horizontal") * Speed;
     }
 
+    private void FixedUpdate()
+    {
+        GetComponent<Rigidbody2D>().velocity = new Vector2(hMove, 0);
+        Animator.SetFloat("Speed", Mathf.Abs(hMove));
+
+        if (hMove > 0 && !m_FacingRight)
+        {
+            Flip();
+        }
+        else if (hMove < 0 && m_FacingRight)
+        {
+            Flip();
+        }
+    }
+
+    private void Flip()
+    {
+        // Switch the way the player is labelled as facing.
+        m_FacingRight = !m_FacingRight;
+
+        // Multiply the player's x local scale by -1.
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
 }
