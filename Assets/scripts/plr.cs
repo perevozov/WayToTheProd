@@ -7,26 +7,46 @@ public class plr : MonoBehaviour
     public float Speed = 7f;
     public float MaxSpeed = 5f;
     public Animator Animator;
+    public GameObject bugPrefab;
 
     private bool m_FacingRight = true;
     private bool jumping = false;
+    private bool attack1Pressed = false;
 
     public float hMove = 0;
 
     public bool isGrounded = false;
-    private Rigidbody2D Rigidbody2D;
 
     private float currentSpeed = 0f;
     private float verticalSpeed = 0f;
 
     private GameObject nearBug;
+    private Rigidbody2D Rigidbody2D;
 
-    private bool attack1Pressed = false;
+    private float generatorTimer = 1f;
+
+    private float maxBugs = 4;
+    private float spawnedBugs = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
+
+        StartCoroutine("CreateEnemy");
+    }
+
+    IEnumerator CreateEnemy()
+    {
+        float x = 0;
+        while (spawnedBugs < maxBugs)
+        {
+            x = Random.Range(-11f, 4.5f);
+            generatorTimer = Random.Range(1f, 5f);
+            Instantiate(bugPrefab, new Vector3(x, 1f, 0), new Quaternion(0, 0, 180, 0));
+            spawnedBugs++;
+            yield return new WaitForSeconds(generatorTimer);
+        }
     }
 
     // Update is called once per frame
@@ -122,7 +142,9 @@ public class plr : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.name == "enemy")
+        Debug.Log(collision.tag);
+
+        if(collision.tag == "bug")
         {
             nearBug = collision.gameObject;
         }
@@ -130,7 +152,7 @@ public class plr : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if(other.name == "enemy")
+        if(other.tag == "bug")
         {
             if (nearBug == other.gameObject)
             {
