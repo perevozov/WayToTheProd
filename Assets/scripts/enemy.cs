@@ -5,7 +5,11 @@ using UnityEngine;
 public class enemy : MonoBehaviour
 {
     public Rigidbody2D Rigidbody2D;
-    public float Speed = 1f;
+    public float VerticalSpeed = 1f;
+    public float HorizontalSpeed = 0f;
+
+    private float LeftBound = -12f;
+    private float RightBound = 5f;
 
     // Start is called before the first frame update
     void Start()
@@ -21,15 +25,46 @@ public class enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Rigidbody2D.velocity = Vector2.down * Speed;
+        Rigidbody2D.velocity = new Vector2(HorizontalSpeed, VerticalSpeed * -1f);
+
+
+        if (transform.position.x < LeftBound || transform.position.x > RightBound)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
-    public void StartFading()
+    public void OnPlayerAttack(int attackType)
     {
-        Debug.Log("i'm gonna die!!");
-        Speed = 0;
+        Debug.Log("i'm hit with attack " + attackType);
+        VerticalSpeed = 0;
 
-        StartCoroutine("Fade");
+        if(attackType == 1)
+        {
+            StartCoroutine("Fade");
+        }
+        else if(attackType == 2)
+        {
+            float mid = RightBound - (RightBound - LeftBound) / 2;
+            Debug.Log("mid: " + mid + "; pos: " + transform.position.x);
+            if(transform.position.x < mid) 
+            {
+                HorizontalSpeed = -8;
+                transform.Rotate(0, 0, 270);
+            }
+            else
+            {
+                HorizontalSpeed = 8;
+                transform.Rotate(0, 0, 90);
+            }
+
+        }
+        else if(attackType == 3)
+        {
+            // play animation
+        }
+
+
     }
 
     IEnumerator Fade()

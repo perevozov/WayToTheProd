@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Platform
   - back
+  - bug
   layers:
   - Default
   - TransparentFX

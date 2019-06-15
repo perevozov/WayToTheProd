@@ -12,6 +12,8 @@ public class plr : MonoBehaviour
     private bool m_FacingRight = true;
     private bool jumping = false;
     private bool attack1Pressed = false;
+    private bool attack2Pressed = false;
+    private bool attack3Pressed = false;
 
     public float hMove = 0;
 
@@ -56,6 +58,8 @@ public class plr : MonoBehaviour
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 2f);
 
         attack1Pressed = Input.GetKeyDown(KeyCode.Alpha1);
+        attack2Pressed = Input.GetKeyDown(KeyCode.Alpha2);
+        attack3Pressed = Input.GetKeyDown(KeyCode.Alpha3);
 
         bool collision = false;
         // If it hits something...
@@ -97,22 +101,21 @@ public class plr : MonoBehaviour
             {
                 Rigidbody2D.AddForce(new Vector2(hMove, 0));
             }
-
-            if(attack1Pressed)
-            {
-                if(nearBug)
-                {
-                    Debug.Log("going to destroy bug!");
-                    nearBug.SendMessage("StartFading");
-
-                }
-                else
-                {
-                    Debug.Log("no bugs near, sorry");
-                }
-            }
-
         }
+
+        if (attack1Pressed && nearBug)
+        {
+            nearBug.SendMessage("OnPlayerAttack", 1);
+        }
+        else if (attack2Pressed && nearBug)
+        {
+            nearBug.SendMessage("OnPlayerAttack", 2);
+        }
+        else if (attack3Pressed && nearBug && isGrounded)
+        {
+            nearBug.SendMessage("OnPlayerAttack", 3);
+        }
+
 
         if (hMove > 0 && !m_FacingRight)
         {
