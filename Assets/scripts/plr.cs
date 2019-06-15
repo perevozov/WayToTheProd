@@ -42,6 +42,12 @@ public class plr : MonoBehaviour
 
     private bool isDying = false;
 
+    private bool VictoryLock = false;
+
+    private GameObject car;
+
+    private GameObject victoryBanner;
+    private GameObject failBanner;
 
     // Start is called before the first frame update
     void Start()
@@ -51,6 +57,12 @@ public class plr : MonoBehaviour
         no_vosprs = GameObject.FindGameObjectsWithTag("no_vospr");
 
         Rigidbody2D = GetComponent<Rigidbody2D>();
+
+        car = GameObject.FindGameObjectWithTag("car");
+        car.GetComponent<Renderer>().enabled = false;
+
+        victoryBanner = GameObject.FindGameObjectWithTag("victory_banner");
+        failBanner = GameObject.FindGameObjectWithTag("fail_banner");
 
         StartCoroutine("CreateEnemy");
     }
@@ -109,7 +121,6 @@ public class plr : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         if (isGrounded)
         {
             if(jumping)
@@ -150,6 +161,44 @@ public class plr : MonoBehaviour
         {
             Flip();
         }
+
+        if (IsVictory())
+        {
+           Victory();
+        }
+    }
+
+    private bool IsVictory()
+    {
+        if(VictoryLock || isDying)
+        {
+            return false;
+        }
+
+        if (spawnedBugs < maxBugs)
+        {
+            return false;
+        }
+
+        GameObject[] currentBugs = GameObject.FindGameObjectsWithTag("bug");
+        return currentBugs.Length == 0;
+    }
+
+    private void Victory()
+    {
+        if(VictoryLock)
+        {
+            return;
+        }
+        VictoryLock = true;
+
+        GetComponent<Renderer>().enabled = false;
+        car.GetComponent<Renderer>().enabled = true;
+        car.GetComponent<Rigidbody2D>().velocity = new Vector2(2, 0);
+
+        victoryBanner.GetComponent<Renderer>().enabled = true;
+
+        Debug.Log("Victory!!");
     }
 
     private void Flip()
@@ -241,6 +290,8 @@ public class plr : MonoBehaviour
         isDying = true;
         isLocked = true;
         Animator.SetBool("IsDying", true);
+
+        failBanner.GetComponent<Renderer>().enabled = true;
 
         Rigidbody2D.velocity = new Vector2(8, 0);
         StartCoroutine("RollOut");

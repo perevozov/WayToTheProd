@@ -8,6 +8,8 @@ TagManager:
   - back
   - bug
   - heart
+  - no_bug
+  - no_vospr
   layers:
   - Default
   - TransparentFX
