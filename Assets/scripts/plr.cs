@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class plr : MonoBehaviour
 {
-    public float Speed = 5f;
+    public float Speed = 7f;
     public float MaxSpeed = 5f;
     public Animator Animator;
 
@@ -33,7 +33,7 @@ public class plr : MonoBehaviour
     void Update()
     {
         hMove = Input.GetAxisRaw("Horizontal") * Speed;
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.5f);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 2f);
 
         attack1Pressed = Input.GetKeyDown(KeyCode.Alpha1);
 
@@ -69,7 +69,7 @@ public class plr : MonoBehaviour
         {
             if(jumping)
             {
-                Rigidbody2D.AddForce(new Vector2(0, 70f));
+                Rigidbody2D.AddForce(new Vector2(0, 90f));
                 jumping = false;
             }
 
