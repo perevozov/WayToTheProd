@@ -10,6 +10,9 @@ TagManager:
   - heart
   - no_bug
   - no_vospr
+  - car
+  - victory_banner
+  - fail_banner
   layers:
   - Default
   - TransparentFX

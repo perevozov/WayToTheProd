@@ -49,6 +49,8 @@ public class plr : MonoBehaviour
     private GameObject victoryBanner;
     private GameObject failBanner;
 
+    private GameObject jump_sound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -63,6 +65,8 @@ public class plr : MonoBehaviour
 
         victoryBanner = GameObject.FindGameObjectWithTag("victory_banner");
         failBanner = GameObject.FindGameObjectWithTag("fail_banner");
+
+        jump_sound = GameObject.Find("jump_sound");
 
         StartCoroutine("CreateEnemy");
     }
@@ -119,6 +123,35 @@ public class plr : MonoBehaviour
 
     }
 
+    private void PlaySound(string sourceName, int delay = 0)
+    {
+        GameObject soundSours = GameObject.Find(sourceName);
+        if(!soundSours)
+        {
+            Debug.LogError("Sound " + sourceName + " not found");
+        }
+
+        if(delay > 0)
+        {
+            soundSours.GetComponent<AudioSource>().PlayDelayed(delay);
+        }
+        else
+        {
+            soundSours.GetComponent<AudioSource>().Play();
+        }
+    }
+
+    private void StopSound(string sourceName)
+    {
+        GameObject soundSours = GameObject.Find(sourceName);
+        if (!soundSours)
+        {
+            Debug.LogError("Sound " + sourceName + " not found");
+        }
+
+        soundSours.GetComponent<AudioSource>().Stop();
+    }
+
     private void FixedUpdate()
     {
         if (isGrounded)
@@ -127,6 +160,7 @@ public class plr : MonoBehaviour
             {
                 Rigidbody2D.AddForce(new Vector2(0, 120f));
                 jumping = false;
+                PlaySound("jump_sound");
             }
 
             if(currentSpeed < MaxSpeed)
@@ -144,12 +178,14 @@ public class plr : MonoBehaviour
         {
             nearBug.SendMessage("OnPlayerAttack", 2);
             DecreaseNoVospr();
+            PlaySound("no_vospr_sound");
         }
         else if (solvedPressed && nearBug && isGrounded)
         {
             Rigidbody2D.velocity = new Vector2(0, 0);
             nearBug.SendMessage("OnPlayerAttack", 3);
             StartCoroutine(Fight());
+            PlaySound("fight_sound");
         }
 
 
@@ -198,6 +234,11 @@ public class plr : MonoBehaviour
 
         victoryBanner.GetComponent<Renderer>().enabled = true;
 
+        PlaySound("victory_sound");
+        PlaySound("car_sound", 1);
+
+        StopSound("background_sound");
+
         Debug.Log("Victory!!");
     }
 
@@ -242,11 +283,11 @@ public class plr : MonoBehaviour
     {
         Debug.Log("Descrease health");
 
-
         currentHitPoints--;
         if (currentHitPoints >= 0)
         {
             DisableHeart(currentHitPoints);
+            PlaySound("kasper_sound");
         }
 
         if(currentHitPoints == 0)
@@ -290,6 +331,9 @@ public class plr : MonoBehaviour
         isDying = true;
         isLocked = true;
         Animator.SetBool("IsDying", true);
+
+        StopSound("background_sound");
+        PlaySound("death_sound");
 
         failBanner.GetComponent<Renderer>().enabled = true;
 
