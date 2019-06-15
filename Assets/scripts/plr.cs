@@ -91,6 +91,8 @@ public class plr : MonoBehaviour
         {
             Flip();
         }
+
+        Debug.Log(verticalSpeed);
     }
 
     private void Flip()
