@@ -32,10 +32,18 @@ public class plr : MonoBehaviour
 
     private bool isLocked = false;
 
+    private GameObject[] hearts;
+
+    private int currentHitPoints = 3;
+
+    private bool isDying = false;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        hearts = GameObject.FindGameObjectsWithTag("heart");
+
         Rigidbody2D = GetComponent<Rigidbody2D>();
 
         StartCoroutine("CreateEnemy");
@@ -122,7 +130,6 @@ public class plr : MonoBehaviour
         {
             nearBug.SendMessage("OnPlayerAttack", 3);
             StartCoroutine(Fight());
-            Rigidbody2D.velocity = new Vector2(0, 0);
         }
 
 
@@ -173,8 +180,41 @@ public class plr : MonoBehaviour
         }
     }
 
+    public void DecreaseHealth()
+    {
+        Debug.Log("Descrease health");
+
+        if(currentHitPoints == 0)
+        {
+            //Die();
+            Debug.Log("die!");
+        }
+        else
+        {
+            DisableHeart(currentHitPoints);
+            currentHitPoints--;
+        }
+
+        Debug.Log("Current HP: " + currentHitPoints);
+    }
+
+    private void DisableHeart(int heartNumber)
+    {
+        hearts[heartNumber - 1].SendMessage("Off");
+    }
+
+    private void Die()
+    {
+        isDying = true;
+        isLocked = true;
+        Animator.SetBool("IsDying", true);
+
+        Rigidbody2D.velocity = new Vector2(0, 0);
+    }
+
     IEnumerator Fight()
     {
+        Rigidbody2D.velocity = new Vector2(0, 0);
         Animator.SetBool("IsFight", true);
         isLocked = true;
         yield return new WaitForSeconds(1);

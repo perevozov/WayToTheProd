@@ -9,8 +9,9 @@ public class enemy : MonoBehaviour
     public float VerticalSpeed = 1f;
     public float HorizontalSpeed = 0f;
 
-    private float LeftBound = -12f;
-    private float RightBound = 5f;
+    private float LeftBound = -12.5f;
+    private float RightBound = 6.5f;
+    private float LowerBound = -7f;
     private Rigidbody2D Rigidbody2D;
 
     // Start is called before the first frame update
@@ -32,6 +33,13 @@ public class enemy : MonoBehaviour
 
         if (transform.position.x < LeftBound || transform.position.x > RightBound)
         {
+            Destroy(this.gameObject);
+        }
+
+        if (transform.position.y < LowerBound)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            player.SendMessage("DecreaseHealth");
             Destroy(this.gameObject);
         }
     }
