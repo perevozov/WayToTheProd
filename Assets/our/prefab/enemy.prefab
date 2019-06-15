@@ -162,5 +162,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Animator: {fileID: 7853366483045590628}
-  VerticalSpeed: 3
+  VerticalSpeed: 2
   HorizontalSpeed: 0

@@ -27,4 +27,21 @@ public class heart_controller : MonoBehaviour
     {
         IsOn = false;
     }
+
+    public void FadeOut()
+    {
+        StartCoroutine("Fade");
+    }
+
+    IEnumerator Fade()
+    {
+        for (float f = 1f; f >= 0; f -= 0.1f)
+        {
+            Color c = GetComponent<Renderer>().material.color;
+            c.a = f;
+            GetComponent<Renderer>().material.color = c;
+            yield return new WaitForSeconds(.1f);
+        }
+        Destroy(this.gameObject);
+    }
 }

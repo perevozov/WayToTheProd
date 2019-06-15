@@ -11,9 +11,9 @@ public class plr : MonoBehaviour
 
     private bool m_FacingRight = true;
     private bool jumping = false;
-    private bool attack1Pressed = false;
-    private bool attack2Pressed = false;
-    private bool attack3Pressed = false;
+    private bool noBugPressed = false;
+    private bool noVosprPressed = false;
+    private bool solvedPressed = false;
 
     public float hMove = 0;
 
@@ -33,8 +33,12 @@ public class plr : MonoBehaviour
     private bool isLocked = false;
 
     private GameObject[] hearts;
+    private GameObject[] no_bugs;
+    private GameObject[] no_vosprs;
 
     private int currentHitPoints = 3;
+    private int noBugCharges = 2;
+    private int noVosprCharges = 2;
 
     private bool isDying = false;
 
@@ -43,6 +47,8 @@ public class plr : MonoBehaviour
     void Start()
     {
         hearts = GameObject.FindGameObjectsWithTag("heart");
+        no_bugs = GameObject.FindGameObjectsWithTag("no_bug");
+        no_vosprs = GameObject.FindGameObjectsWithTag("no_vospr");
 
         Rigidbody2D = GetComponent<Rigidbody2D>();
 
@@ -69,9 +75,9 @@ public class plr : MonoBehaviour
         {
             hMove = Input.GetAxisRaw("Horizontal") * Speed;
          
-            attack1Pressed = Input.GetKeyDown(KeyCode.Alpha1);
-            attack2Pressed = Input.GetKeyDown(KeyCode.Alpha2);
-            attack3Pressed = Input.GetKeyDown(KeyCode.Alpha3);
+            noBugPressed = Input.GetKeyDown(KeyCode.Alpha1) && noBugCharges > 0;
+            noVosprPressed = Input.GetKeyDown(KeyCode.Alpha2) && noVosprCharges > 0;
+            solvedPressed = Input.GetKeyDown(KeyCode.Alpha3);
         }
 
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 2f);
@@ -118,16 +124,19 @@ public class plr : MonoBehaviour
             }
         }
 
-        if (attack1Pressed && nearBug)
+        if (noBugPressed && nearBug && noBugCharges > 0)
         {
             nearBug.SendMessage("OnPlayerAttack", 1);
+            DecreaseNoBug();
         }
-        else if (attack2Pressed && nearBug)
+        else if (noVosprPressed && nearBug)
         {
             nearBug.SendMessage("OnPlayerAttack", 2);
+            DecreaseNoVospr();
         }
-        else if (attack3Pressed && nearBug && isGrounded)
+        else if (solvedPressed && nearBug && isGrounded)
         {
+            Rigidbody2D.velocity = new Vector2(0, 0);
             nearBug.SendMessage("OnPlayerAttack", 3);
             StartCoroutine(Fight());
         }
@@ -200,6 +209,28 @@ public class plr : MonoBehaviour
         Debug.Log("Current HP: " + currentHitPoints);
     }
 
+    public void DecreaseNoBug()
+    {
+        noBugCharges--;
+        if(noBugCharges >=0)
+        {
+            no_bugs[noBugCharges].SendMessage("FadeOut");
+            //Destroy(no_bugs[noBugCharges]);
+            no_bugs[noBugCharges] = null;
+        }
+    }
+
+    public void DecreaseNoVospr()
+    {
+        noVosprCharges--;
+        if (noVosprCharges >= 0)
+        {
+            no_vosprs[noVosprCharges].SendMessage("FadeOut");
+            //Destroy(no_vosprs[noVosprCharges]);
+            no_vosprs[noVosprCharges] = null;
+        }
+    }
+
     private void DisableHeart(int heartNumber)
     {
         hearts[heartNumber].SendMessage("Off");
@@ -217,6 +248,8 @@ public class plr : MonoBehaviour
 
     IEnumerator Fight()
     {
+        hMove = 0;
+        jumping = false;
         Rigidbody2D.velocity = new Vector2(0, 0);
         Animator.SetBool("IsFight", true);
         isLocked = true;
