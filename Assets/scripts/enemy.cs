@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class enemy : MonoBehaviour
 {
-    public Rigidbody2D Rigidbody2D;
+    public Animator Animator;
+
     public float VerticalSpeed = 1f;
     public float HorizontalSpeed = 0f;
 
     private float LeftBound = -12f;
     private float RightBound = 5f;
+    private Rigidbody2D Rigidbody2D;
 
     // Start is called before the first frame update
     void Start()
@@ -61,7 +63,9 @@ public class enemy : MonoBehaviour
         }
         else if(attackType == 3)
         {
-            // play animation
+            //transform.Rotate(0, 0, 0);
+            //Animator.SetBool("IsSolved", true);
+            Destroy(this.gameObject);
         }
 
 

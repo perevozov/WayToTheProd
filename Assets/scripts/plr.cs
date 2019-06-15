@@ -30,6 +30,9 @@ public class plr : MonoBehaviour
     private float maxBugs = 4;
     private float spawnedBugs = 0;
 
+    private bool isLocked = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -54,12 +57,16 @@ public class plr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        hMove = Input.GetAxisRaw("Horizontal") * Speed;
-        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 2f);
+        if(!isLocked)
+        {
+            hMove = Input.GetAxisRaw("Horizontal") * Speed;
+         
+            attack1Pressed = Input.GetKeyDown(KeyCode.Alpha1);
+            attack2Pressed = Input.GetKeyDown(KeyCode.Alpha2);
+            attack3Pressed = Input.GetKeyDown(KeyCode.Alpha3);
+        }
 
-        attack1Pressed = Input.GetKeyDown(KeyCode.Alpha1);
-        attack2Pressed = Input.GetKeyDown(KeyCode.Alpha2);
-        attack3Pressed = Input.GetKeyDown(KeyCode.Alpha3);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 2f);
 
         bool collision = false;
         // If it hits something...
@@ -72,7 +79,7 @@ public class plr : MonoBehaviour
         }
         isGrounded = collision;
 
-        if (isGrounded && Input.GetButtonDown("Jump"))
+        if (isGrounded && Input.GetButtonDown("Jump") && !isLocked)
         {
             jumping = true;
         }
@@ -114,6 +121,8 @@ public class plr : MonoBehaviour
         else if (attack3Pressed && nearBug && isGrounded)
         {
             nearBug.SendMessage("OnPlayerAttack", 3);
+            StartCoroutine(Fight());
+            Rigidbody2D.velocity = new Vector2(0, 0);
         }
 
 
@@ -162,5 +171,14 @@ public class plr : MonoBehaviour
                 nearBug = null;
             }
         }
+    }
+
+    IEnumerator Fight()
+    {
+        Animator.SetBool("IsFight", true);
+        isLocked = true;
+        yield return new WaitForSeconds(1);
+        isLocked = false;
+        Animator.SetBool("IsFight", false);
     }
 }
