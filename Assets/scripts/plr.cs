@@ -184,15 +184,17 @@ public class plr : MonoBehaviour
     {
         Debug.Log("Descrease health");
 
-        if(currentHitPoints == 0)
-        {
-            //Die();
-            Debug.Log("die!");
-        }
-        else
+
+        currentHitPoints--;
+        if (currentHitPoints >= 0)
         {
             DisableHeart(currentHitPoints);
-            currentHitPoints--;
+        }
+
+        if(currentHitPoints == 0)
+        {
+            Die();
+            Debug.Log("die!");
         }
 
         Debug.Log("Current HP: " + currentHitPoints);
@@ -200,7 +202,7 @@ public class plr : MonoBehaviour
 
     private void DisableHeart(int heartNumber)
     {
-        hearts[heartNumber - 1].SendMessage("Off");
+        hearts[heartNumber].SendMessage("Off");
     }
 
     private void Die()
@@ -209,7 +211,8 @@ public class plr : MonoBehaviour
         isLocked = true;
         Animator.SetBool("IsDying", true);
 
-        Rigidbody2D.velocity = new Vector2(0, 0);
+        Rigidbody2D.velocity = new Vector2(8, 0);
+        StartCoroutine("RollOut");
     }
 
     IEnumerator Fight()
@@ -220,5 +223,17 @@ public class plr : MonoBehaviour
         yield return new WaitForSeconds(1);
         isLocked = false;
         Animator.SetBool("IsFight", false);
+    }
+
+    IEnumerator RollOut()
+    {
+
+        for (float i = 0; i <= 30; i++)
+        {
+            transform.Rotate(new Vector3(0, 0, 30f * i));
+
+            yield return new WaitForSeconds(.1f);
+        }
+        Destroy(this.gameObject);
     }
 }

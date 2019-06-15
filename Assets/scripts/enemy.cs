@@ -6,7 +6,7 @@ public class enemy : MonoBehaviour
 {
     public Animator Animator;
 
-    public float VerticalSpeed = 1f;
+    public float VerticalSpeed = 15f;
     public float HorizontalSpeed = 0f;
 
     private float LeftBound = -12.5f;
@@ -39,7 +39,11 @@ public class enemy : MonoBehaviour
         if (transform.position.y < LowerBound)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
-            player.SendMessage("DecreaseHealth");
+            if(player)
+            {
+                player.SendMessage("DecreaseHealth");
+            }
+
             Destroy(this.gameObject);
         }
     }
