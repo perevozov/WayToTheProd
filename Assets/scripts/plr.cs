@@ -16,6 +16,9 @@ public class plr : MonoBehaviour
     public bool isGrounded = false;
     private Rigidbody2D Rigidbody2D;
 
+    private float currentSpeed = 0f;
+    private float verticalSpeed = 0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,17 +44,30 @@ public class plr : MonoBehaviour
         }
         isGrounded = collision;
 
-        if (Input.GetButtonUp("Jump") && isGrounded)
+        if (isGrounded)
         {
-            jumping = true;
+            if(Input.GetButtonDown("Jump"))
+            {
+                jumping = true;
+            }
+            else
+            {
+
+            }
         }
 
+        currentSpeed = Mathf.Abs(Rigidbody2D.velocity.x);
+        verticalSpeed = Rigidbody2D.velocity.y;
+
+        Animator.SetFloat("Speed", currentSpeed);
+        Animator.SetFloat("VertSpeed", verticalSpeed);
+        Animator.SetBool("Jumping", (!isGrounded && Mathf.Abs(verticalSpeed) > 0.01));
 
     }
 
     private void FixedUpdate()
     {
-        float currentSpeed = Mathf.Abs(Rigidbody2D.velocity.x);
+
         if (isGrounded)
         {
             if(jumping)
@@ -66,11 +82,6 @@ public class plr : MonoBehaviour
             }
 
         }
-        else
-        {
-            //Animator.SetFloat("Speed", 0);
-        }
-
 
         if (hMove > 0 && !m_FacingRight)
         {
@@ -80,8 +91,6 @@ public class plr : MonoBehaviour
         {
             Flip();
         }
-
-        Animator.SetFloat("Speed", currentSpeed);
     }
 
     private void Flip()
