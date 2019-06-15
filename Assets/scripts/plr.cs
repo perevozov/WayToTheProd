@@ -46,7 +46,7 @@ public class plr : MonoBehaviour
         float x = 0;
         while (spawnedBugs < maxBugs)
         {
-            x = Random.Range(-11f, 4.5f);
+            x = Random.Range(-12f, 6f);
             generatorTimer = Random.Range(1f, 5f);
             Instantiate(bugPrefab, new Vector3(x, 1f, 0), new Quaternion(0, 0, 180, 0));
             spawnedBugs++;
@@ -100,7 +100,7 @@ public class plr : MonoBehaviour
         {
             if(jumping)
             {
-                Rigidbody2D.AddForce(new Vector2(0, 90f));
+                Rigidbody2D.AddForce(new Vector2(0, 120f));
                 jumping = false;
             }
 
