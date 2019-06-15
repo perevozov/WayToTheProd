@@ -19,6 +19,10 @@ public class plr : MonoBehaviour
     private float currentSpeed = 0f;
     private float verticalSpeed = 0f;
 
+    private GameObject nearBug;
+
+    private bool attack1Pressed = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,9 +33,9 @@ public class plr : MonoBehaviour
     void Update()
     {
         hMove = Input.GetAxisRaw("Horizontal") * Speed;
-
-
         RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.5f);
+
+        attack1Pressed = Input.GetKeyDown(KeyCode.Alpha1);
 
         bool collision = false;
         // If it hits something...
@@ -44,16 +48,9 @@ public class plr : MonoBehaviour
         }
         isGrounded = collision;
 
-        if (isGrounded)
+        if (isGrounded && Input.GetButtonDown("Jump"))
         {
-            if(Input.GetButtonDown("Jump"))
-            {
-                jumping = true;
-            }
-            else
-            {
-
-            }
+            jumping = true;
         }
 
         currentSpeed = Mathf.Abs(Rigidbody2D.velocity.x);
@@ -81,6 +78,20 @@ public class plr : MonoBehaviour
                 Rigidbody2D.AddForce(new Vector2(hMove, 0));
             }
 
+            if(attack1Pressed)
+            {
+                if(nearBug)
+                {
+                    Debug.Log("going to destroy bug!");
+                    nearBug.SendMessage("StartFading");
+
+                }
+                else
+                {
+                    Debug.Log("no bugs near, sorry");
+                }
+            }
+
         }
 
         if (hMove > 0 && !m_FacingRight)
@@ -91,8 +102,6 @@ public class plr : MonoBehaviour
         {
             Flip();
         }
-
-        Debug.Log(verticalSpeed);
     }
 
     private void Flip()
@@ -104,5 +113,29 @@ public class plr : MonoBehaviour
         Vector3 theScale = transform.localScale;
         theScale.x *= -1;
         transform.localScale = theScale;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.name == "enemy")
+        {
+            nearBug = collision.gameObject;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if(other.name == "enemy")
+        {
+            if (nearBug == other.gameObject)
+            {
+                nearBug = null;
+            }
+        }
     }
 }

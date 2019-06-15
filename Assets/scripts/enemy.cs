@@ -19,4 +19,9 @@ public class enemy : MonoBehaviour
     {
         
     }
+
+    public void StartFading()
+    {
+        Debug.Log("i'm gonna die!!");
+    }
 }
