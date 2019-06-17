@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class plr : MonoBehaviour
 {
-    public float Speed = 7f;
+    public float Speed = 2f;
     public float MaxSpeed = 5f;
     public Animator Animator;
     public GameObject bugPrefab;
@@ -27,7 +27,7 @@ public class plr : MonoBehaviour
 
     private float generatorTimer = 1f;
 
-    private float maxBugs = 4;
+    private float maxBugs = 0;
     private float spawnedBugs = 0;
 
     private bool isLocked = false;
@@ -158,16 +158,19 @@ public class plr : MonoBehaviour
         {
             if(jumping)
             {
-                Rigidbody2D.AddForce(new Vector2(0, 120f));
+                Rigidbody2D.AddForce(new Vector2(0, 720f));
                 jumping = false;
                 PlaySound("jump_sound");
             }
 
-            if(currentSpeed < MaxSpeed)
+            /*if(currentSpeed < MaxSpeed)
             {
                 Rigidbody2D.AddForce(new Vector2(hMove, 0));
-            }
+            }*/
         }
+
+        float velocity_y = Rigidbody2D.velocity.y;
+        Rigidbody2D.velocity = new Vector2(hMove, velocity_y);
 
         if (noBugPressed && nearBug && noBugCharges > 0)
         {
@@ -206,6 +209,7 @@ public class plr : MonoBehaviour
 
     private bool IsVictory()
     {
+        return false;
         if(VictoryLock || isDying)
         {
             return false;
